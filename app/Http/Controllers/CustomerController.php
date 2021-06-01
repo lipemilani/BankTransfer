@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Application\DTO\CustomerDTO;
 use Illuminate\Http\Request;
+use App\Domain\Models\Customer;
+use App\Application\DTO\CustomerDTO;
+use App\Http\Requests\CustomerRequest;
 use App\Application\Services\CustomerApplicationService;
 
 /**
@@ -23,21 +25,21 @@ class CustomerController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        dd('index');
+        $result = Customer::paginate(15);
+
+        return response()->json($result);
     }
 
     /**
-     * @param Request $request
+     * @param CustomerRequest $request
      * @return \Illuminate\Http\JsonResponse
      * @throws \ReflectionException
      */
-    public function store(Request $request)
+    public function store(CustomerRequest $request)
     {
         $dto = CustomerDTO::fromRequest($request);
 
@@ -63,7 +65,7 @@ class CustomerController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \ReflectionException
      */
-    public function update(Request $request, $id)
+    public function update(CustomerRequest $request, $id)
     {
         $dto = CustomerDTO::fromRequest($request);
         $dto->id = $id;
@@ -75,13 +77,13 @@ class CustomerController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $result = $this->service->delete($id);
+        $this->service->delete($id);
 
-        return response()->json($result);
+        return response(null, 204);
     }
 
     /**
@@ -92,8 +94,8 @@ class CustomerController extends Controller
      */
     public function restore($id)
     {
-        $result = $this->service->restore($id);
+        $this->service->restore($id);
 
-        return response()->json($result);
+        return response(null, 204);
     }
 }
