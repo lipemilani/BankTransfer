@@ -12,13 +12,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $id
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property bool $active
+ * @property bool   $active
  * @property string $name
  * @property string $cpf
  * @property string $email
  * @property string $password
  * @property string $balance
- * @property string $type
+ * @property int    $type
  */
 class Customer extends Model
 {

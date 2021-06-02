@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
  */
 Route::resource('/customers', CustomerController::class);
 Route::put('/customers/{id}/restore', [CustomerController::class, 'restore']);
+
+/**
+ * Transaction routes
+ */
+Route::resource('/transactions', TransactionController::class);
