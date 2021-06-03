@@ -6,6 +6,7 @@ use App\Application\DTO\TransactionDTO;
 use App\Application\Validations\Message;
 use App\Domain\Tasks\Customers\TransferTask;
 use App\Domain\Tasks\Transactions\SuccessfulTask;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use App\Domain\Services\TransactionDomainService;
 use App\Domain\Tasks\Customers\ValidateBalanceTask;
@@ -47,22 +48,51 @@ class CreateTransactionAction
      */
     public function execute(TransactionDTO $dto)
     {
-        $validateBalance = app(ValidateBalanceTask::class)->execute($dto->payerId, $dto->transactionValue);
+        $validateBalance = $this->validateBalance($dto);
 
         if (!$validateBalance) {
             Message::execute('Saldo indisponível na carteira.');
         }
 
-        $authorizationIntegration = app(AuthorizationService::class)->send();
+        $authorizationIntegration = $this->checkAuthorization();
 
         if (!$authorizationIntegration) {
             Message::execute('Serviço autorizador externo temporariamente fora do ar.');
         }
 
+        $this->executeTransfer($dto);
+
+        $this->notifyUser();
+
+        return $this->createTransaction($dto);
+    }
+
+    private function validateBalance(TransactionDTO $dto)
+    {
+        return app(ValidateBalanceTask::class)->execute($dto->payerId, $dto->transactionValue);
+    }
+
+    private function checkAuthorization()
+    {
+        return app(AuthorizationService::class)->send();
+    }
+
+    private function executeTransfer(TransactionDTO $dto)
+    {
         app(TransferTask::class)->execute($dto);
+    }
 
+    private function notifyUser()
+    {
         app(NotificationService::class)->send();
+    }
 
+    /**
+     * @param TransactionDTO $dto
+     * @return Model
+     */
+    private function createTransaction(TransactionDTO $dto): Model
+    {
         app(SuccessfulTask::class)->execute($dto);
         $transactionModel = $this->transformer->toModel($dto);
         return $this->service->create($transactionModel);
