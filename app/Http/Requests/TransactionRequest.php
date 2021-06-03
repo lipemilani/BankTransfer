@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Rules\Transactions\CheckPayerType;
 
 /**
  * Class TransactionRequest
@@ -23,7 +24,7 @@ class TransactionRequest extends FormRequest
             'transaction_value' => 'numeric|required',
         ];
 
-//        $request['rules'] = new CheckDuplicity(request()->all());
+        $request['rules'] = new CheckPayerType(request()->all());
 
         return $request;
 

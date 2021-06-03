@@ -2,9 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Application\Validations\Customer\CheckDuplicity;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Rules\Customers\CheckDuplicity;
 
+/**
+ * Class CustomerRequest
+ * @package App\Http\Requests
+ */
 class CustomerRequest extends FormRequest
 {
     /**
@@ -24,6 +28,9 @@ class CustomerRequest extends FormRequest
 
     }
 
+    /**
+     * @return string[]
+     */
     private function store()
     {
         $request = [
@@ -40,6 +47,9 @@ class CustomerRequest extends FormRequest
         return $request;
     }
 
+    /**
+     * @return string[]
+     */
     private function update()
     {
         return [

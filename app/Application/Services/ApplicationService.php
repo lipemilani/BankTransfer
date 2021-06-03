@@ -49,8 +49,6 @@ abstract class ApplicationService
     public function find($id)
     {
         return $this->repository->find($id);
-
-//        return $this->transformer->transform($result);
     }
     /**
      * @param DataTransferObject $dto

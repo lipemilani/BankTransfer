@@ -12,7 +12,6 @@ class TransactionDomainService extends DomainService
 {
     public function create(Model $model): Model
     {
-        $model->is_success = true;
         $model->save();
 
         return $model;
