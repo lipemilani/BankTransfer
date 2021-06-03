@@ -6,10 +6,10 @@ use App\Domain\Models\Customer;
 use Illuminate\Contracts\Validation\ImplicitRule;
 
 /**
- * Class CheckDuplicity
- * @package App\Http\Requests\Rules
+ * Class CheckIfExistCustomer
+ * @package App\Http\Requests\Rules\Customers
  */
-class CheckDuplicity implements ImplicitRule
+class CheckIfExistCustomer implements ImplicitRule
 {
     /**
      * @var array
@@ -38,19 +38,19 @@ class CheckDuplicity implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
-        $email = data_get($this->attributes, 'email', null);
-        $cpf = data_get($this->attributes, 'cpf', null);
+        $payerId = data_get($this->attributes, 'payer_id', null);
+        $payeeId = data_get($this->attributes, 'payee_id', null);
 
-        $customer = Customer::query()->where('email', $email)->get();
+        $customer = Customer::find($payerId);
 
-        if (!blank($customer)) {
-            $this->errorMessage[] = 'E-mail já existe.';
+        if (blank($customer)) {
+            $this->errorMessage[] = 'Pagador';
         }
 
-        $customer = Customer::query()->where('cpf', $cpf)->get();
+        $customer = Customer::find($payeeId);
 
-        if (!blank($customer)) {
-            $this->errorMessage[] = 'Cpf já existe.';
+        if (blank($customer)) {
+            $this->errorMessage[] = 'Beneficiário';
         }
 
         if (!blank($this->errorMessage)) {
@@ -65,6 +65,6 @@ class CheckDuplicity implements ImplicitRule
      */
     public function message()
     {
-        return implode (", ", $this->errorMessage);
+        return implode (", ", $this->errorMessage) . ' não existe.';
     }
 }

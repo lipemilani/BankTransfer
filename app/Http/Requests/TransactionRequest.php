@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Rules\Customers\CheckIfExistCustomer;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Rules\Transactions\CheckPayerType;
 
@@ -25,6 +26,7 @@ class TransactionRequest extends FormRequest
         ];
 
         $request['rules'] = new CheckPayerType(request()->all());
+        $request['rules'] = new CheckIfExistCustomer(request()->all());
 
         return $request;
 

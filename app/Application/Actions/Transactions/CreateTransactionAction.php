@@ -67,6 +67,10 @@ class CreateTransactionAction
         return $this->createTransaction($dto);
     }
 
+    /**
+     * @param TransactionDTO $dto
+     * @return mixed
+     */
     private function validateBalance(TransactionDTO $dto)
     {
         return app(ValidateBalanceTask::class)->execute($dto->payerId, $dto->transactionValue);
