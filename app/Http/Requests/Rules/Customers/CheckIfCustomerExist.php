@@ -6,15 +6,15 @@ use App\Domain\Models\Customer;
 use Illuminate\Contracts\Validation\ImplicitRule;
 
 /**
- * Class CheckIfExistCustomer
+ * Class CheckIfCustomerExist
  * @package App\Http\Requests\Rules\Customers
  */
-class CheckIfExistCustomer implements ImplicitRule
+class CheckIfCustomerExist implements ImplicitRule
 {
     /**
      * @var array
      */
-    protected array $attributes;
+    protected ?array $attributes;
 
     /**
      * @var array
@@ -22,10 +22,10 @@ class CheckIfExistCustomer implements ImplicitRule
     protected array $errorMessage;
 
     /**
-     * CheckDuplicity constructor.
-     * @param array $attributes
+     * CheckIfCustomerExist constructor.
+     * @param array|null $attributes
      */
-    public function __construct(array $attributes)
+    public function __construct(?array $attributes)
     {
         $this->attributes = $attributes;
         $this->errorMessage = [];

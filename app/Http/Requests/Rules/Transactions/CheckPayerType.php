@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Rules\Transactions;
 
 use App\Domain\Enums\TypeEnum;
+use App\Domain\Models\Customer;
 use Illuminate\Contracts\Validation\ImplicitRule;
 
 /**
@@ -12,11 +13,11 @@ use Illuminate\Contracts\Validation\ImplicitRule;
 class CheckPayerType implements ImplicitRule
 {
     /**
-     * @var array
+     * @var array|null
      */
-    protected array $attributes;
+    protected ?array $attributes;
 
-    public function __construct(array $attributes)
+    public function __construct(?array $attributes)
     {
         $this->attributes = $attributes;
     }
@@ -28,9 +29,18 @@ class CheckPayerType implements ImplicitRule
      */
     public function passes($attribute, $value)
     {
-        $payer = data_get($this->attributes, 'payer_id', null);
+        $payerId = data_get($this->attributes, 'payer_id', null);
 
-        if ($payer === TypeEnum::CUSTOMER_SHOPKEEPER) {
+        if (blank($payerId)) {
+            return true;
+        }
+
+        /**
+         * @var Customer $payer
+         */
+        $payer = Customer::find($payerId);
+
+        if ($payer->type === TypeEnum::CUSTOMER_SHOPKEEPER) {
             return false;
         }
 

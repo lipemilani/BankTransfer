@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\Rules\Customers\CheckIfExistCustomer;
+use App\Http\Requests\Rules\Customers\CheckIfCustomerExist;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Rules\Transactions\CheckPayerType;
 
@@ -21,15 +21,16 @@ class TransactionRequest extends FormRequest
     {
         $request = [
             'payer_id' => 'integer|required',
-            'payee_id' => 'integer|required',
+            'payee_id' => 'integer|required|different:payer_id',
             'transaction_value' => 'numeric|required',
         ];
 
-        $request['rules'] = new CheckPayerType(request()->all());
-        $request['rules'] = new CheckIfExistCustomer(request()->all());
+        $request['rules'] = [
+            new CheckPayerType(request()->all()),
+            new CheckIfCustomerExist(request()->all())
+        ];
 
         return $request;
 
     }
-
 }
