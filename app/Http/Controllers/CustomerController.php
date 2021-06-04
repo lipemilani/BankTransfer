@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Domain\Models\Customer;
 use App\Application\DTO\CustomerDTO;
 use App\Http\Requests\CustomerRequest;
 use App\Application\Services\CustomerApplicationService;
+use App\Http\Transformers\Customers\CustomerTransformer;
 
 /**
  * Class CustomerController
@@ -36,50 +36,59 @@ class CustomerController extends Controller
 
     /**
      * @param CustomerRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      * @throws \ReflectionException
      */
-    public function store(CustomerRequest $request)
+    public function store(CustomerRequest $request): array
     {
         $dto = CustomerDTO::fromRequest($request);
 
-        $result = $this->service->store($dto);
+        /**
+         * @var Customer $customer
+         */
+        $customer = $this->service->store($dto);
 
-        return response()->json($result);
+        return (new CustomerTransformer)->transform($customer);
     }
 
     /**
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param int $id
+     * @return array
      */
-    public function show($id)
+    public function show(int $id): array
     {
-        $result = $this->service->find($id);
+        /**
+         * @var Customer $customer
+         */
+        $customer = $this->service->find($id);
 
-        return response()->json($result);
+        return (new CustomerTransformer)->transform($customer);
     }
 
     /**
-     * @param Request $request
+     * @param CustomerRequest $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      * @throws \ReflectionException
      */
-    public function update(CustomerRequest $request, $id)
+    public function update(CustomerRequest $request, $id): array
     {
         $dto = CustomerDTO::fromRequest($request);
         $dto->id = $id;
 
+        /**
+         * @var Customer $customer
+         */
         $customer = $this->service->update($dto);
 
-        return response()->json($customer);
+        return (new CustomerTransformer)->transform($customer);
     }
 
     /**
      * @param $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(int $id): \Illuminate\Http\Response
     {
         $this->service->delete($id);
 
@@ -92,7 +101,7 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function restore($id)
+    public function restore(int $id): \Illuminate\Http\Response
     {
         $this->service->restore($id);
 

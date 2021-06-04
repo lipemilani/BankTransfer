@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TransactionDomainService extends DomainService
 {
+
+    /**
+     * @param Model $model
+     * @return Model
+     */
     public function create(Model $model): Model
     {
         $model->save();

@@ -6,6 +6,7 @@ use App\Domain\Models\Transaction;
 use App\Application\DTO\TransactionDTO;
 use App\Http\Requests\TransactionRequest;
 use App\Application\Services\TransactionApplicationService;
+use App\Http\Transformers\Transactions\TransactionTransformer;
 
 /**
  * Class TransactionController
@@ -35,15 +36,18 @@ class TransactionController extends Controller
 
     /**
      * @param TransactionRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      * @throws \ReflectionException
      */
-    public function store(TransactionRequest $request)
+    public function store(TransactionRequest $request): array
     {
         $dto = TransactionDTO::fromRequest($request);
 
-        $result = $this->service->store($dto);
+        /**
+         * @var Transaction $transaction
+         */
+        $transaction = $this->service->store($dto);
 
-        return response()->json($result);
+        return (new TransactionTransformer)->transform($transaction);
     }
 }

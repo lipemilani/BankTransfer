@@ -27,6 +27,6 @@ Route::resource('/customers', CustomerController::class);
 Route::put('/customers/{id}/restore', [CustomerController::class, 'restore']);
 
 /**
- * Transaction routes
+ * Transactions routes
  */
 Route::resource('/transactions', TransactionController::class);

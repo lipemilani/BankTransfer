@@ -26,10 +26,10 @@ class CreateTransactionAction
 
     /**
      * @param TransactionDTO $dto
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      * @throws ValidationException
      */
-    public function execute(TransactionDTO $dto)
+    public function execute(TransactionDTO $dto): Model
     {
         $validateBalance = $this->validateBalance($dto);
 
@@ -46,9 +46,9 @@ class CreateTransactionAction
 
     /**
      * @param TransactionDTO $dto
-     * @return mixed
+     * @return bool
      */
-    private function validateBalance(TransactionDTO $dto)
+    private function validateBalance(TransactionDTO $dto): bool
     {
         return app(ValidateBalanceTask::class)->execute($dto->payerId, $dto->transactionValue);
     }
@@ -62,7 +62,10 @@ class CreateTransactionAction
         return app(TransferTask::class)->execute($dto);
     }
 
-    private function notifyUser()
+    /**
+     * @return void
+     */
+    private function notifyUser(): void
     {
         app(NotificationService::class)->send();
     }

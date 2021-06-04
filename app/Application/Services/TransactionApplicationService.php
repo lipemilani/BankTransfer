@@ -27,6 +27,10 @@ class TransactionApplicationService extends ApplicationService
         parent::__construct($service, $transformer, $repository);
     }
 
+    /**
+     * @param DataTransferObject $dto
+     * @return Model|null
+     */
     public function store(DataTransferObject $dto): ?Model
     {
         return app(CreateTransactionAction::class)->execute($dto);
