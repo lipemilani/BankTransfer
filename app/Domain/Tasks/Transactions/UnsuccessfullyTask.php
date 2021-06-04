@@ -5,16 +5,16 @@ namespace App\Domain\Tasks\Transactions;
 use App\Application\DTO\TransactionDTO;
 
 /**
- * Class SuccessfulTask
+ * Class UnsuccessfullyTask
  * @package App\Domain\Tasks\Transactions
  */
-class SuccessfulTask
+class UnsuccessfullyTask
 {
     /**
      * @param TransactionDTO $dto
      */
     public function execute(TransactionDTO &$dto)
     {
-        $dto->isSuccess = true;
+        $dto->isSuccess = false;
     }
 }

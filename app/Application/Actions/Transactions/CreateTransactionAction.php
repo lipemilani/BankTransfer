@@ -5,8 +5,11 @@ namespace App\Application\Actions\Transactions;
 use App\Application\DTO\TransactionDTO;
 use App\Application\Validations\Message;
 use App\Domain\Tasks\Customers\TransferTask;
+use App\Domain\Tasks\Transactions\CreateTransactionTask;
 use App\Domain\Tasks\Transactions\SuccessfulTask;
+use App\Domain\Tasks\Transactions\UnsuccessfullyTask;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Domain\Services\TransactionDomainService;
 use App\Domain\Tasks\Customers\ValidateBalanceTask;
@@ -20,26 +23,6 @@ use App\Infrastructure\Integrations\AuthorizationService;
  */
 class CreateTransactionAction
 {
-    /**
-     * @var TransactionTransformer
-     */
-    protected TransactionTransformer $transformer;
-
-    /**
-     * @var TransactionDomainService
-     */
-    protected TransactionDomainService $service;
-
-    /**
-     * CreateTransactionAction constructor.
-     * @param TransactionTransformer $transformer
-     * @param TransactionDomainService $service
-     */
-    public function __construct(TransactionTransformer $transformer, TransactionDomainService $service)
-    {
-        $this->transformer = $transformer;
-        $this->service = $service;
-    }
 
     /**
      * @param TransactionDTO $dto
@@ -54,17 +37,11 @@ class CreateTransactionAction
             Message::execute('Saldo indisponível na carteira.');
         }
 
-        $authorizationIntegration = $this->checkAuthorization();
-
-        if (!$authorizationIntegration) {
-            Message::execute('Serviço autorizador externo temporariamente fora do ar.');
-        }
-
-        $this->executeTransfer($dto);
+        $isSuccessful = $this->executeTransfer($dto);
 
         $this->notifyUser();
 
-        return $this->createTransaction($dto);
+        return $this->createTransaction($dto, $isSuccessful);
     }
 
     /**
@@ -76,14 +53,13 @@ class CreateTransactionAction
         return app(ValidateBalanceTask::class)->execute($dto->payerId, $dto->transactionValue);
     }
 
-    private function checkAuthorization()
+    /**
+     * @param TransactionDTO $dto
+     * @return bool
+     */
+    private function executeTransfer(TransactionDTO $dto): bool
     {
-        return app(AuthorizationService::class)->send();
-    }
-
-    private function executeTransfer(TransactionDTO $dto)
-    {
-        app(TransferTask::class)->execute($dto);
+        return app(TransferTask::class)->execute($dto);
     }
 
     private function notifyUser()
@@ -93,12 +69,11 @@ class CreateTransactionAction
 
     /**
      * @param TransactionDTO $dto
+     * @param bool $isSuccessful
      * @return Model
      */
-    private function createTransaction(TransactionDTO $dto): Model
+    private function createTransaction(TransactionDTO $dto, bool $isSuccessful): Model
     {
-        app(SuccessfulTask::class)->execute($dto);
-        $transactionModel = $this->transformer->toModel($dto);
-        return $this->service->create($transactionModel);
+        return app(CreateTransactionTask::class)->execute($dto, $isSuccessful);
     }
 }

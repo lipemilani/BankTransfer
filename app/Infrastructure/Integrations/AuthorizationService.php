@@ -40,7 +40,7 @@ class AuthorizationService
      * @return bool
      * @throws \Httpful\Exception\ConnectionErrorException
      */
-    public function send()
+    public function send(): bool
     {
         $result = Request::get($this->apiEndPoint)->send();
 
