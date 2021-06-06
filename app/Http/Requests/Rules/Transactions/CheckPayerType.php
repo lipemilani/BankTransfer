@@ -40,7 +40,7 @@ class CheckPayerType implements ImplicitRule
          */
         $payer = Customer::find($payerId);
 
-        if ($payer->type === TypeEnum::CUSTOMER_SHOPKEEPER) {
+        if (optional($payer)->type === TypeEnum::CUSTOMER_SHOPKEEPER) {
             return false;
         }
 
