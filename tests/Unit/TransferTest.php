@@ -18,7 +18,7 @@ class TransferTest extends TestCase
         $transactionDto = TransactionDTO::fromArray([
             'payer_id' => 1,
             'payee_id' => 2,
-            'transaction_value' => 50
+            'transaction_value' => 10
         ]);
 
         $result = app(TransferTask::class)->execute($transactionDto);

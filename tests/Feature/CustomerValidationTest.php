@@ -18,7 +18,7 @@ class CustomerValidationTest extends TestCase
         $result = $this->json('POST','/api/customers', [
             'name' => $this->faker->firstName,
             'cpf' => $this->faker->numerify('###########'),
-	        'email' => 'lojista2@picpay.com',
+	        'email' => 'lojista1@picpay.com',
 	        'password' => $this->faker->password,
 	        'balance' => '100',
 	        'type' => 2
@@ -38,7 +38,7 @@ class CustomerValidationTest extends TestCase
     {
         $result = $this->json('POST','/api/customers', [
             'name' => $this->faker->firstName,
-            'cpf' => '88334045018',
+            'cpf' => '73127860064',
             'email' => $this->faker->email,
             'password' => $this->faker->password,
             'balance' => '100',
@@ -94,8 +94,8 @@ class CustomerValidationTest extends TestCase
     public function test_check_if_payer_type_is_shopkeeper()
     {
         $result = $this->json('POST','/api/transactions', [
-            'payer_id' => 2,
-            'payee_id' => 3,
+            'payer_id' => 3,
+            'payee_id' => 1,
             'transaction_value' => 20
         ]);
 
