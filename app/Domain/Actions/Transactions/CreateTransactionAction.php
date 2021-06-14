@@ -1,21 +1,15 @@
 <?php
 
-namespace App\Application\Actions\Transactions;
+namespace App\Domain\Actions\Transactions;
 
-use App\Application\DTO\TransactionDTO;
-use App\Application\Validations\Message;
-use App\Domain\Tasks\Customers\TransferTask;
-use App\Domain\Tasks\Transactions\CreateTransactionTask;
-use App\Domain\Tasks\Transactions\SuccessfulTask;
-use App\Domain\Tasks\Transactions\UnsuccessfullyTask;
+use App\Domain\Log\ValidationLog;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use App\Application\DTO\TransactionDTO;
+use App\Domain\Tasks\Customers\TransferTask;
 use Illuminate\Validation\ValidationException;
-use App\Domain\Services\TransactionDomainService;
 use App\Domain\Tasks\Customers\ValidateBalanceTask;
-use App\Application\Transformers\TransactionTransformer;
 use App\Infrastructure\Integrations\NotificationService;
-use App\Infrastructure\Integrations\AuthorizationService;
+use App\Domain\Tasks\Transactions\CreateTransactionTask;
 
 /**
  * Class CreateTransactionAction
@@ -34,7 +28,7 @@ class CreateTransactionAction
         $validateBalance = $this->validateBalance($dto);
 
         if (!$validateBalance) {
-            Message::execute('Saldo indisponível na carteira.');
+            ValidationLog::send('Saldo indisponível na carteira.');
         }
 
         $isSuccessful = $this->executeTransfer($dto);

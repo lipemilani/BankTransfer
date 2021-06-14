@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Domain\Models\Transaction;
 use Tests\TestCase;
+use App\Domain\Models\Transaction;
 use App\Application\DTO\TransactionDTO;
-use App\Application\Actions\Transactions\CreateTransactionAction;
+use App\Domain\Actions\Transactions\CreateTransactionAction;
 
 /**
  * Class CreateTransactionTest

@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Application\Validations;
+namespace App\Domain\Log;
 
 use Illuminate\Validation\ValidationException;
 
 /**
- * Class Message
- * @package App\Application\Validations
+ * Class ValidationLog
+ * @package App\Domain\Log
  */
-class Message
+class ValidationLog implements IValidationLog
 {
+
     /**
      * @param string $message
+     * @return IValidationLog
      * @throws ValidationException
      */
-    public static function execute(string $message)
+    public static function send(string $message): IValidationLog
     {
         throw ValidationException::withMessages([$message]);
     }

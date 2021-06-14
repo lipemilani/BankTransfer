@@ -7,7 +7,7 @@ use App\Application\DTO\DataTransferObject;
 use App\Domain\Services\TransactionDomainService;
 use App\Application\Transformers\TransactionTransformer;
 use App\Infrastructure\Repositories\TransactionRepository;
-use App\Application\Actions\Transactions\CreateTransactionAction;
+use App\Domain\Actions\Transactions\CreateTransactionAction;
 
 /**
  * Class TransactionApplicationService
